@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CareConnect AI | Elderly Care & Medication Management Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="font-scale-large role-senior">
+  <!-- Accessibility Skip Link -->
+  <a href="#mainContent" class="skip-link">Skip to main content</a>
+
+  <!-- Top Emergency / Announcement Banner (Hidden by default unless triggered or low stock) -->
+  <div id="alertBanner" class="alert-banner" role="region" aria-label="Important Alerts" style="display: none;">
+    <div class="alert-banner-content">
+      <span class="alert-banner-icon" id="alertBannerIcon">⚠️</span>
+      <span class="alert-banner-text" id="alertBannerText">Low stock warning: You have 4 pills remaining.</span>
+      <button class="alert-banner-action" id="alertBannerAction">View Medicine</button>
+      <button class="alert-banner-close" id="alertBannerClose" aria-label="Dismiss alert">✕</button>
+    </div>
+  </div>
+
+  <!-- Main Top Bar Header -->
+  <header class="topbar" role="banner">
+    <div class="topbar-inner">
+      <!-- Brand -->
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">✚</div>
+        <div class="brand-text">
+          <div class="brand-title">CareConnect <span class="brand-badge">AI</span></div>
+          <div class="brand-tagline">Elderly Care & Medication Companion</div>
+        </div>
+      </div>
+
+      <!-- Center Accessibility & Senior Helpers -->
+      <div class="accessibility-toolbar" role="toolbar" aria-label="Accessibility options">
+        <!-- Text Size Scaling -->
+        <div class="control-group" title="Adjust text size for easier reading">
+          <span class="control-label"><span class="icon">👁️</span> Text:</span>
+          <div class="btn-group">
+            <button class="tool-btn" id="fontStandardBtn" aria-label="Standard text size">A</button>
+            <button class="tool-btn active" id="fontLargeBtn" aria-label="Large text size">A+</button>
+            <button class="tool-btn" id="fontXLargeBtn" aria-label="Extra large text size">A++</button>
+          </div>
+        </div>
+
+        <!-- High Contrast Mode Toggle -->
+        <button class="tool-btn-pill" id="contrastToggle" title="Toggle high contrast mode" aria-pressed="false">
+          <span class="icon">🌓</span> <span class="label">High Contrast</span>
+        </button>
+
+        <!-- Read Aloud / Voice Narration -->
+        <button class="tool-btn-pill" id="voiceNarrationBtn" title="Listen to today's schedule aloud">
+          <span class="icon">🔊</span> <span class="label">Read Aloud</span>
+        </button>
+      </div>
+
+      <!-- Right Header Actions: Role Switcher, Notifications, Emergency SOS -->
+      <div class="top-actions">
+        <!-- Notification Bell -->
+        <button class="bell-btn" id="notificationsBtn" title="View notifications & reminders" aria-label="Notifications">
+          <span class="bell-icon">🔔</span>
+          <span class="notification-badge" id="notificationCount">2</span>
+        </button>
+
+        <!-- Profile & Role Selector -->
+        <div class="role-switcher" title="Switch between Senior and Caregiver view">
+          <button class="role-btn active" id="roleSeniorBtn">
+            <span class="role-avatar">👴</span>
+            <span class="role-info">
+              <strong>Ravi (Senior)</strong>
+              <small>Easy View</small>
+            </span>
+          </button>
+          <button class="role-btn" id="roleCaregiverBtn">
+            <span class="role-avatar">👩‍⚕️</span>
+            <span class="role-info">
+              <strong>Caregiver / Family</strong>
+              <small>Full Portal</small>
+            </span>
+          </button>
+        </div>
+
+        <!-- Big Emergency SOS Button -->
+        <button class="emergency-sos-btn" id="sosHeaderBtn" title="Emergency Help: One-click call family & doctor">
+          <span class="sos-pulse"></span>
+          <span class="sos-text">🆘 SOS HELP</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="shell" id="mainContent">
+
+    <!-- Senior Hero Banner -->
+    <section class="welcome-banner" aria-labelledby="welcomeHeading">
+      <div class="welcome-copy">
+        <div class="eyebrow-tag">
+          <span class="pulse-dot"></span>
+          <span id="liveTime">Sunday, 8:30 AM</span> · <span id="currentRoleTag">Senior Mode</span>
+        </div>
+        <h1 id="welcomeHeading">Good morning, <span id="welcomeName">Ravi</span> 👋</h1>
+        <p class="welcome-desc" id="welcomeSub">
+          Here is your simple daily medicine plan. Large buttons make it easy to record your medicines.
+        </p>
+      </div>
+
+      <!-- Quick Action Badges -->
+      <div class="welcome-actions">
+        <button class="hero-action-btn primary-hero" id="quickTakeNextBtn">
+          <span class="hero-icon">💊</span>
+          <div>
+            <strong id="nextDoseTitle">Next: Vitamin D3</strong>
+            <small id="nextDoseSubtitle">Scheduled for 8:00 AM · Due now</small>
+          </div>
+        </button>
+
+        <button class="hero-action-btn secondary-hero" id="triggerReminderTestBtn" title="Test how dose reminder alerts look and sound">
+          <span class="hero-icon">⏰</span>
+          <div>
+            <strong>Test Reminder</strong>
+            <small>Hear chime & see popup</small>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <!-- Today's Adherence & Status Meter -->
+    <section class="daily-progress-card">
+      <div class="progress-info">
+        <div class="progress-title-row">
+          <div class="progress-heading">
+            <span class="meter-icon">📊</span>
+            <div>
+              <h3>Today's Medication Progress</h3>
+              <p id="progressStatusText">2 of 4 medicines taken (50% completed)</p>
+            </div>
+          </div>
+          <div class="streak-badge" id="streakBadgeContainer">
+            <span class="fire-icon">🔥</span>
+            <strong id="streakCount">6 Day Streak</strong>
+            <small>Keep it up!</small>
+          </div>
+        </div>
+        <!-- Visual Progress Bar -->
+        <div class="progress-bar-track" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" id="adherenceProgressBar">
+          <div class="progress-bar-fill" id="adherenceProgressFill" style="width: 50%;"></div>
+        </div>
+      </div>
+
+      <!-- Mini KPI Stat Counters -->
+      <div class="stats-grid">
+        <article class="stat-box stat-pink" id="statScheduledBox">
+          <div class="stat-icon-wrap">📋</div>
+          <div class="stat-content">
+            <span class="stat-label">Scheduled Today</span>
+            <strong class="stat-number" id="medicineCount">4</strong>
+            <small class="stat-hint">Total doses</small>
+          </div>
+        </article>
+
+        <article class="stat-box stat-green" id="statTakenBox">
+          <div class="stat-icon-wrap">✅</div>
+          <div class="stat-content">
+            <span class="stat-label">Taken on Time</span>
+            <strong class="stat-number" id="takenCount">2</strong>
+            <small class="stat-hint">Marked taken</small>
+          </div>
+        </article>
+
+        <article class="stat-box stat-red" id="statMissedBox">
+          <div class="stat-icon-wrap">⚠️</div>
+          <div class="stat-content">
+            <span class="stat-label">Missed / Pending</span>
+            <strong class="stat-number" id="pendingCount">2</strong>
+            <small class="stat-hint" id="pendingLabel">2 pending</small>
+          </div>
+        </article>
+
+        <article class="stat-box stat-blue" id="statVisitBox">
+          <div class="stat-icon-wrap">🩺</div>
+          <div class="stat-content">
+            <span class="stat-label">Doctor Visits</span>
+            <strong class="stat-number" id="appointmentCount">1</strong>
+            <small class="stat-hint" id="nextVisitHint">Dr. Meera (2d)</small>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <nav class="main-nav-tabs" aria-label="Care sections">
+      <button class="nav-tab active" data-tab="schedule">
+        <span class="tab-icon">📅</span>
+        <span class="tab-title">Daily Schedule</span>
+      </button>
+      <button class="nav-tab" data-tab="medicines">
+        <span class="tab-icon">💊</span>
+        <span class="tab-title">Medicine Cabinet</span>
+      </button>
+      <button class="nav-tab" data-tab="appointments">
+        <span class="tab-icon">🩺</span>
+        <span class="tab-title">Doctor Visits</span>
+      </button>
+      <button class="nav-tab" data-tab="adherence">
+        <span class="tab-icon">📈</span>
+        <span class="tab-title">Adherence & Vitals</span>
+      </button>
+      <button class="nav-tab" data-tab="careteam">
+        <span class="tab-icon">👨‍👩‍👧</span>
+        <span class="tab-title">Caregiver & Family</span>
+      </button>
+      <button class="nav-tab" data-tab="assistant">
+        <span class="tab-icon">🤖</span>
+        <span class="tab-title">AI Health Companion</span>
+      </button>
+    </nav>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 1: DAILY MEDICATION SCHEDULE -->
+    <!-- ========================================================================= -->
+    <section id="schedule" class="page-view active" aria-labelledby="scheduleHeader">
+      <!-- Schedule Controller Bar -->
+      <div class="schedule-controls-card">
+        <div class="date-navigator">
+          <button class="date-nav-btn" id="prevDayBtn" aria-label="Previous Day">◀ Yesterday</button>
+          <div class="current-date-display">
+            <span class="calendar-icon">🗓️</span>
+            <div>
+              <strong id="scheduleDateLabel">Today</strong>
+              <small id="scheduleFullDate">Sunday, Nov 15, 2026</small>
+            </div>
+          </div>
+          <button class="date-nav-btn" id="nextDayBtn" aria-label="Next Day">Tomorrow ▶</button>
+          <button class="date-nav-btn today-btn" id="todayResetBtn">Jump to Today</button>
+        </div>
+
+        <div class="schedule-quick-actions">
+          <button class="action-pill-btn secondary" id="speakScheduleBtn" title="Speak all medicines due today">
+            <span class="icon">🔊</span> Listen to Today's Plan
+          </button>
+          <button class="action-pill-btn primary" id="addMedicineScheduleBtn">
+            <span class="icon">＋</span> Add Medicine
+          </button>
+        </div>
+      </div>
+
+      <!-- Time of Day Blocks for Elderly Clarity -->
+      <div class="schedule-timeline">
+        <!-- Morning Block -->
+        <div class="time-block" id="morningBlock">
+          <div class="time-block-header morning-header">
+            <div class="time-block-title">
+              <span class="time-icon">🌅</span>
+              <div>
+                <h3>Morning Schedule</h3>
+                <small>6:00 AM – 11:59 AM (Breakfast Routine)</small>
+              </div>
+            </div>
+            <button class="bulk-take-btn" data-slot="morning" id="bulkTakeMorningBtn">✓ Take All Morning</button>
+          </div>
+          <div class="med-slot-list" id="morningMedsList">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+
+        <!-- Afternoon Block -->
+        <div class="time-block" id="afternoonBlock">
+          <div class="time-block-header afternoon-header">
+            <div class="time-block-title">
+              <span class="time-icon">☀️</span>
+              <div>
+                <h3>Afternoon Schedule</h3>
+                <small>12:00 PM – 4:59 PM (Lunch Routine)</small>
+              </div>
+            </div>
+            <button class="bulk-take-btn" data-slot="afternoon" id="bulkTakeAfternoonBtn">✓ Take All Afternoon</button>
+          </div>
+          <div class="med-slot-list" id="afternoonMedsList">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+
+        <!-- Evening Block -->
+        <div class="time-block" id="eveningBlock">
+          <div class="time-block-header evening-header">
+            <div class="time-block-title">
+              <span class="time-icon">🌆</span>
+              <div>
+                <h3>Evening Schedule</h3>
+                <small>5:00 PM – 8:59 PM (Dinner Routine)</small>
+              </div>
+            </div>
+            <button class="bulk-take-btn" data-slot="evening" id="bulkTakeEveningBtn">✓ Take All Evening</button>
+          </div>
+          <div class="med-slot-list" id="eveningMedsList">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+
+        <!-- Night / Bedtime Block -->
+        <div class="time-block" id="nightBlock">
+          <div class="time-block-header night-header">
+            <div class="time-block-title">
+              <span class="time-icon">🌙</span>
+              <div>
+                <h3>Night & Bedtime Schedule</h3>
+                <small>9:00 PM onwards (Before Sleep)</small>
+              </div>
+            </div>
+            <button class="bulk-take-btn" data-slot="night" id="bulkTakeNightBtn">✓ Take All Bedtime</button>
+          </div>
+          <div class="med-slot-list" id="nightMedsList">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Doctor Visits reminder banner at bottom of schedule -->
+      <div class="schedule-appointment-card" id="scheduleAppointmentSnippet">
+        <div class="snippet-icon">🩺</div>
+        <div class="snippet-content">
+          <h4>Upcoming Doctor Visit</h4>
+          <p id="snippetAppointmentText">Dr. Meera Sharma (Cardiologist) · Tuesday at 10:30 AM</p>
+        </div>
+        <button class="action-pill-btn secondary" data-goto="appointments">View Details →</button>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 2: MEDICATION MANAGEMENT (CRUD) -->
+    <!-- ========================================================================= -->
+    <section id="medicines" class="page-view" aria-labelledby="medicinesHeader">
+      <div class="section-title-bar">
+        <div>
+          <p class="section-eyebrow">MEDICATION CABINET & INVENTORY</p>
+          <h2 id="medicinesHeader">Manage Your Medicines</h2>
+          <p class="section-sub">Add, edit, review dosage instructions, and track refill supplies.</p>
+        </div>
+        <button class="action-pill-btn primary large-btn" id="addNewMedBtn">
+          <span class="icon">＋</span> Add New Medicine
+        </button>
+      </div>
+
+      <!-- Filters & Search Bar -->
+      <div class="filter-search-card">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="medSearchInput" placeholder="Search by medicine name, dosage, or instruction..." aria-label="Search medicines">
+          <button class="clear-search-btn" id="clearSearchBtn" aria-label="Clear search">✕</button>
+        </div>
+        <div class="filter-chips" role="radiogroup" aria-label="Filter medications by time">
+          <button class="filter-chip active" data-filter="all">All Medicines (<span id="countFilterAll">4</span>)</button>
+          <button class="filter-chip" data-filter="morning">🌅 Morning</button>
+          <button class="filter-chip" data-filter="afternoon">☀️ Afternoon</button>
+          <button class="filter-chip" data-filter="evening">🌆 Evening</button>
+          <button class="filter-chip" data-filter="night">🌙 Night</button>
+          <button class="filter-chip alert-chip" data-filter="low-stock">⚠️ Low Stock (<span id="countFilterLow">1</span>)</button>
+        </div>
+      </div>
+
+      <!-- Medication Grid Cards -->
+      <div class="medications-grid" id="medicationsGrid">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 3: DOCTOR APPOINTMENTS -->
+    <!-- ========================================================================= -->
+    <section id="appointments" class="page-view" aria-labelledby="appointmentsHeader">
+      <div class="section-title-bar">
+        <div>
+          <p class="section-eyebrow">HEALTHCARE PROVIDERS & VISITS</p>
+          <h2 id="appointmentsHeader">Doctor Appointments</h2>
+          <p class="section-sub">Never miss a check-up. Keep consultations, clinic instructions, and notes organized.</p>
+        </div>
+        <button class="action-pill-btn primary large-btn" id="addNewAppointmentBtn">
+          <span class="icon">＋</span> Add Appointment
+        </button>
+      </div>
+
+      <!-- Appointments Split Grid: Upcoming & Past -->
+      <div class="appointments-view-grid">
+        <!-- Upcoming Visits -->
+        <div class="appointment-section">
+          <div class="section-subheading">
+            <span class="subheading-icon">🗓️</span>
+            <h3>Upcoming Appointments (<span id="upcomingCount">1</span>)</h3>
+          </div>
+          <div class="appointments-list" id="upcomingAppointmentsList">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Past / Completed Visits -->
+        <div class="appointment-section">
+          <div class="section-subheading">
+            <span class="subheading-icon">📜</span>
+            <h3>Past Consultations & History</h3>
+          </div>
+          <div class="appointments-list" id="pastAppointmentsList">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 4: ADHERENCE TRACKING & VITALS -->
+    <!-- ========================================================================= -->
+    <section id="adherence" class="page-view" aria-labelledby="adherenceHeader">
+      <div class="section-title-bar">
+        <div>
+          <p class="section-eyebrow">HEALTH ANALYTICS & COMPLIANCE</p>
+          <h2 id="adherenceHeader">Medication Adherence & Vitals</h2>
+          <p class="section-sub">Track consistency over time, spot missed patterns, and monitor essential vitals.</p>
+        </div>
+        <div class="header-action-group">
+          <button class="action-pill-btn secondary" id="exportReportBtn">
+            <span class="icon">🖨️</span> Print Doctor Summary
+          </button>
+          <button class="action-pill-btn primary" id="logVitalsBtn">
+            <span class="icon">＋</span> Log Vitals
+          </button>
+        </div>
+      </div>
+
+      <!-- Adherence Hero Score Cards -->
+      <div class="adherence-kpi-grid">
+        <div class="kpi-card adherence-grade-card">
+          <div class="kpi-gauge-wrap">
+            <div class="circular-progress" id="adherenceCircleGauge">
+              <span class="gauge-value" id="adherencePercentText">94%</span>
+              <span class="gauge-label">7-Day Score</span>
+            </div>
+          </div>
+          <div class="kpi-details">
+            <span class="adherence-status-pill green-pill" id="adherenceStatusPill">🌟 Excellent Adherence</span>
+            <p class="kpi-desc">Ravi has taken <strong>24 of 26</strong> prescribed doses this week. High consistency protects heart health!</p>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-stat-header">
+            <span class="icon-wrap-kpi orange">🔥</span>
+            <h4>Current Streak</h4>
+          </div>
+          <div class="kpi-huge-stat" id="streakHugeText">6 Days</div>
+          <p class="kpi-subtext">Longest streak recorded: <strong>21 days</strong>.</p>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-stat-header">
+            <span class="icon-wrap-kpi teal">🛡️</span>
+            <h4>Refill Security</h4>
+          </div>
+          <div class="kpi-huge-stat" id="refillSecurityText">3 of 4 Good</div>
+          <p class="kpi-subtext" id="refillAlertDetail">1 medicine requires a pharmacy refill this week.</p>
+        </div>
+      </div>
+
+      <!-- Visual 7-Day Adherence Chart -->
+      <div class="panel-box chart-panel">
+        <div class="panel-header">
+          <div>
+            <h3>7-Day Adherence History</h3>
+            <p class="subtext">Daily completion rate for the past week</p>
+          </div>
+          <div class="chart-legend">
+            <span class="legend-item"><span class="legend-dot green"></span> 100% Taken</span>
+            <span class="legend-item"><span class="legend-dot yellow"></span> Partial</span>
+            <span class="legend-item"><span class="legend-dot red"></span> Missed</span>
+          </div>
+        </div>
+        <div class="adherence-bars-container" id="adherenceBarsContainer">
+          <!-- 7 day bars injected via JS -->
+        </div>
+      </div>
+
+      <!-- Health Vitals Section -->
+      <div class="panel-box vitals-panel">
+        <div class="panel-header">
+          <div>
+            <h3>Elderly Vitals Log (Blood Pressure, Sugar, Heart Rate)</h3>
+            <p class="subtext">Share these readings with Dr. Meera during your consultations.</p>
+          </div>
+          <button class="action-pill-btn secondary" id="logVitalsHeaderBtn">＋ Record New Reading</button>
+        </div>
+
+        <div class="vitals-kpi-row" id="vitalsKpiRow">
+          <!-- Latest Vitals Cards -->
+          <div class="vital-card">
+            <div class="vital-icon bp-icon">🩺</div>
+            <div class="vital-info">
+              <span class="vital-name">Blood Pressure</span>
+              <strong class="vital-val" id="latestBpVal">122 / 80</strong>
+              <small class="vital-status normal-tag">Normal (Resting)</small>
+            </div>
+          </div>
+
+          <div class="vital-card">
+            <div class="vital-icon sugar-icon">🩸</div>
+            <div class="vital-info">
+              <span class="vital-name">Blood Glucose</span>
+              <strong class="vital-val" id="latestSugarVal">112 mg/dL</strong>
+              <small class="vital-status normal-tag">Fasting (Target &lt;120)</small>
+            </div>
+          </div>
+
+          <div class="vital-card">
+            <div class="vital-icon pulse-icon">❤️</div>
+            <div class="vital-info">
+              <span class="vital-name">Heart Rate / Pulse</span>
+              <strong class="vital-val" id="latestPulseVal">72 bpm</strong>
+              <small class="vital-status normal-tag">Healthy Rhythm</small>
+            </div>
+          </div>
+
+          <div class="vital-card">
+            <div class="vital-icon weight-icon">⚖️</div>
+            <div class="vital-info">
+              <span class="vital-name">Weight</span>
+              <strong class="vital-val" id="latestWeightVal">68.5 kg</strong>
+              <small class="vital-status normal-tag">Stable</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Vitals History Table -->
+        <div class="vitals-table-wrap">
+          <table class="vitals-table" id="vitalsTable">
+            <thead>
+              <tr>
+                <th>Date & Time</th>
+                <th>Blood Pressure</th>
+                <th>Blood Glucose</th>
+                <th>Heart Rate</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="vitalsTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 5: CAREGIVER & FAMILY DASHBOARD -->
+    <!-- ========================================================================= -->
+    <section id="careteam" class="page-view" aria-labelledby="careteamHeader">
+      <div class="section-title-bar">
+        <div>
+          <p class="section-eyebrow">FAMILY CARE CIRCLE & SAFETY</p>
+          <h2 id="careteamHeader">Caregiver & Family Portal</h2>
+          <p class="section-sub">Stay connected. Monitor adherence, leave care notes, and access emergency protocols.</p>
+        </div>
+        <button class="action-pill-btn secondary" id="addCareNoteBtn">
+          <span class="icon">✍️</span> Log Care Note
+        </button>
+      </div>
+
+      <!-- Emergency Quick Action Banner in Caregiver View -->
+      <div class="emergency-care-banner">
+        <div class="emergency-banner-left">
+          <span class="banner-sos-badge">EMERGENCY PROTOCOL</span>
+          <h3>Quick Emergency Contacts & Senior Medical ID</h3>
+          <p>Instant access to primary contacts, doctors, and medical conditions for paramedics or family.</p>
+        </div>
+        <div class="emergency-banner-right">
+          <button class="emergency-trigger-btn" id="openSosModalBtn">
+            🚨 Open Emergency SOS Center
+          </button>
+        </div>
+      </div>
+
+      <!-- Care Team Roster Cards -->
+      <div class="care-team-grid" id="careTeamGrid">
+        <!-- Senior Card -->
+        <article class="care-member-card primary-patient">
+          <div class="member-avatar senior-avatar">👴</div>
+          <div class="member-details">
+            <div class="member-role-badge">Care Recipient</div>
+            <h3>Ravi Kumar</h3>
+            <p class="member-desc">Age: 74 · Blood: O+ · Allergic to: Penicillin</p>
+            <div class="member-meta">
+              <span>📍 Home: Flat 402, Green Meadows</span>
+            </div>
+          </div>
+          <div class="member-actions">
+            <button class="member-btn" id="viewSeniorMedicalIdBtn">Medical ID</button>
+          </div>
+        </article>
+
+        <!-- Family Member: Anita -->
+        <article class="care-member-card">
+          <div class="member-avatar daughter-avatar">👩</div>
+          <div class="member-details">
+            <div class="member-role-badge daughter-badge">Daughter · Primary Guardian</div>
+            <h3>Anita Kumar</h3>
+            <p class="member-desc">Receives real-time missed dose alerts & visit reports.</p>
+            <div class="member-meta">
+              <span>📞 +1 (555) 019-2834</span>
+            </div>
+          </div>
+          <div class="member-actions">
+            <button class="member-btn call-action-btn" data-phone="+15550192834">📞 Call Anita</button>
+          </div>
+        </article>
+
+        <!-- Caregiver: Sunita -->
+        <article class="care-member-card">
+          <div class="member-avatar nurse-avatar">👩‍⚕️</div>
+          <div class="member-details">
+            <div class="member-role-badge nurse-badge">Certified Caregiver</div>
+            <h3>Sunita Rao</h3>
+            <p class="member-desc">Daily morning & evening support. Medication assistance.</p>
+            <div class="member-meta">
+              <span>📞 +1 (555) 014-4921</span>
+            </div>
+          </div>
+          <div class="member-actions">
+            <button class="member-btn call-action-btn" data-phone="+15550144921">📞 Call Sunita</button>
+          </div>
+        </article>
+
+        <!-- Doctor: Dr. Meera -->
+        <article class="care-member-card">
+          <div class="member-avatar doc-avatar">👨‍⚕️</div>
+          <div class="member-details">
+            <div class="member-role-badge doctor-badge">Primary Cardiologist</div>
+            <h3>Dr. Meera Sharma</h3>
+            <p class="member-desc">City Heart & Care Clinic. Manages blood pressure & diabetes regimen.</p>
+            <div class="member-meta">
+              <span>📞 +1 (555) 017-8822</span>
+            </div>
+          </div>
+          <div class="member-actions">
+            <button class="member-btn call-action-btn" data-phone="+15550178822">📞 Call Clinic</button>
+          </div>
+        </article>
+      </div>
+
+      <!-- Caregiver Audit Trail & Journal Split -->
+      <div class="care-split-grid">
+        <!-- Live Audit Activity Feed -->
+        <div class="panel-box">
+          <div class="panel-header">
+            <div>
+              <h3>Live Care Activity Feed</h3>
+              <p class="subtext">Real-time log of taken medicines, vitals, and changes</p>
+            </div>
+            <button class="text-link-btn" id="clearLogBtn">Clear History</button>
+          </div>
+          <div class="activity-feed" id="activityFeed">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Caregiver Daily Notes & Journal -->
+        <div class="panel-box">
+          <div class="panel-header">
+            <div>
+              <h3>Caregiver Shift Journal</h3>
+              <p class="subtext">Observations, meals, mood, and daily routines</p>
+            </div>
+            <button class="action-pill-btn secondary small" id="newJournalEntryBtn">＋ Add Entry</button>
+          </div>
+          <div class="journal-entries-list" id="journalEntriesList">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 6: AI HEALTHCARE ASSISTANT INTERFACE -->
+    <!-- ========================================================================= -->
+    <section id="assistant" class="page-view" aria-labelledby="assistantHeader">
+      <div class="ai-assistant-wrapper">
+        <!-- Assistant Left: Guidelines, Presets, Interactions Checker -->
+        <div class="ai-sidebar">
+          <div class="ai-avatar-card">
+            <div class="ai-bot-avatar">
+              <span class="ai-spark">✨</span>
+              <span class="bot-emoji">🤖</span>
+            </div>
+            <div class="ai-bot-intro">
+              <h3>CareConnect AI Companion</h3>
+              <span class="ai-status-tag"><span class="dot"></span> Ready to assist Ravi</span>
+            </div>
+          </div>
+
+          <div class="ai-disclaimer-box">
+            <span class="disclaimer-icon">ℹ️</span>
+            <p><strong>Medical Safety Notice:</strong> This AI explains schedules, pill instructions, food interactions, and appointment prep. In case of emergency or severe chest pain, immediately use the red SOS button.</p>
+          </div>
+
+          <!-- Quick Senior Prompts -->
+          <div class="ai-quick-prompts">
+            <h4>Quick Voice & Touch Prompts</h4>
+            <div class="prompt-chips">
+              <button class="prompt-chip" data-prompt="Check drug interactions for my current medicines">
+                💊 Check Drug Interactions
+              </button>
+              <button class="prompt-chip" data-prompt="What should I do if I miss my morning medicine?">
+                ⏰ What if I miss a dose?
+              </button>
+              <button class="prompt-chip" data-prompt="How should I take Metformin with food?">
+                🍽️ Metformin & meal rules
+              </button>
+              <button class="prompt-chip" data-prompt="Help me identify a white round pill with a score mark">
+                🔍 Pill Identifier Guide
+              </button>
+              <button class="prompt-chip" data-prompt="What questions should I ask Dr. Meera at my next visit?">
+                🩺 Questions for Dr. Meera
+              </button>
+              <button class="prompt-chip" data-prompt="How can I stay well hydrated with heart medicine?">
+                💧 Water intake advice
+              </button>
+            </div>
+          </div>
+
+          <!-- Pill Identifier Quick Tool -->
+          <div class="pill-id-card">
+            <h4>Pill Quick Identifier</h4>
+            <div class="pill-id-inputs">
+              <select id="pillShapeSelect" aria-label="Pill shape">
+                <option value="round">Round Pill</option>
+                <option value="oval">Oval / Oblong</option>
+                <option value="capsule">Two-color Capsule</option>
+              </select>
+              <select id="pillColorSelect" aria-label="Pill color">
+                <option value="white">White</option>
+                <option value="yellow">Yellow / Cream</option>
+                <option value="pink">Pink / Coral</option>
+              </select>
+              <button class="action-pill-btn secondary small full-width" id="identifyPillBtn">
+                Match My Medicine
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assistant Right: Conversational Chat UI -->
+        <div class="ai-chat-container">
+          <div class="ai-chat-header">
+            <div class="ai-header-info">
+              <strong>CareConnect Assistant</strong>
+              <small>Empathetic, clear, and elderly-friendly</small>
+            </div>
+            <div class="ai-header-controls">
+              <button class="tool-btn-pill small" id="toggleAiVoiceOutput" title="Speak assistant replies automatically">
+                <span class="icon" id="aiVoiceIcon">🔊</span> <span id="aiVoiceLabel">Voice Out: ON</span>
+              </button>
+              <button class="tool-btn-pill small" id="clearChatBtn" title="Clear chat conversation">
+                <span class="icon">🗑️</span> Clear
+              </button>
+            </div>
+          </div>
+
+          <!-- Chat Messages Area -->
+          <div class="ai-chat-messages" id="chatMessages" role="log" aria-live="polite">
+            <!-- Messages injected here -->
+          </div>
+
+          <!-- Chat Input Area with Voice Speech-to-Text Support -->
+          <div class="ai-chat-input-row">
+            <button class="mic-btn" id="voiceInputMicBtn" title="Speak your question using microphone" aria-label="Voice input">
+              <span class="mic-icon">🎙️</span>
+            </button>
+            <input type="text" id="userChatMessage" placeholder="Ask anything, e.g., 'Can I take Vitamin D with milk?'..." aria-label="Chat input" />
+            <button class="send-msg-btn" id="sendChatBtn" aria-label="Send message">
+              <span class="send-text">Ask AI</span>
+              <span class="send-arrow">➔</span>
+            </button>
+          </div>
+          <div class="ai-input-hint">
+            <span>💡 Tip: Click the microphone 🎙️ to talk, or click any quick prompt on the left.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-inner">
+        <div>
+          <strong>CareConnect AI · Hackathon Prototype</strong>
+          <p>Designed with love for seniors, caregivers, and families. Local prototype storage enabled.</p>
+        </div>
+        <div class="footer-links">
+          <button class="footer-btn" id="resetDemoDataBtn">↺ Reset Demo Data</button>
+          <span class="footer-sep">·</span>
+          <button class="footer-btn" id="backupDataBtn">💾 Backup Data</button>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- MODALS & DIALOGS -->
+  <!-- ========================================================================= -->
+
+  <!-- 1. ADD / EDIT MEDICINE DIALOG -->
+  <dialog id="medicineModal" class="app-dialog" aria-labelledby="medModalTitle">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h2 id="medModalTitle">Add Medicine</h2>
+        <button class="dialog-close-btn" id="closeMedModalBtn" aria-label="Close dialog">✕</button>
+      </div>
+
+      <form id="medicineModalForm" class="dialog-form">
+        <input type="hidden" id="editMedId" name="id" value="" />
+
+        <div class="form-group">
+          <label for="medNameInput">Medicine Name <span class="required">*</span></label>
+          <input type="text" id="medNameInput" name="name" required placeholder="e.g. Amlodipine, Metformin, Paracetamol" class="form-input" />
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="medDosageInput">Dosage / Strength <span class="required">*</span></label>
+            <input type="text" id="medDosageInput" name="dosage" required placeholder="e.g. 5 mg, 500 mg, 1 tablet" class="form-input" />
+          </div>
+
+          <div class="form-group">
+            <label for="medTypeSelect">Form / Type</label>
+            <select id="medTypeSelect" name="type" class="form-input">
+              <option value="Tablet">💊 Tablet</option>
+              <option value="Capsule">💊 Capsule</option>
+              <option value="Syrup">🥄 Syrup / Liquid</option>
+              <option value="Drops">💧 Drops</option>
+              <option value="Inhaler">💨 Inhaler</option>
+              <option value="Injection">💉 Injection</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="medTimeInput">Scheduled Time <span class="required">*</span></label>
+            <input type="time" id="medTimeInput" name="time" required value="08:00" class="form-input" />
+          </div>
+
+          <div class="form-group">
+            <label for="medSlotSelect">Routine Time Slot</label>
+            <select id="medSlotSelect" name="slot" class="form-input">
+              <option value="morning">🌅 Morning (6 AM – 12 PM)</option>
+              <option value="afternoon">☀️ Afternoon (12 PM – 5 PM)</option>
+              <option value="evening">🌆 Evening (5 PM – 9 PM)</option>
+              <option value="night">🌙 Night (Bedtime)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="medInstructionInput">How to Take (Instructions)</label>
+          <input type="text" id="medInstructionInput" name="instruction" placeholder="e.g. After breakfast with a full glass of water" class="form-input" />
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="medInventoryInput">Pills in Stock (Inventory)</label>
+            <input type="number" id="medInventoryInput" name="inventory" min="0" max="999" value="30" class="form-input" />
+          </div>
+
+          <div class="form-group">
+            <label for="medDoctorInput">Prescribed By Doctor</label>
+            <input type="text" id="medDoctorInput" name="doctor" placeholder="e.g. Dr. Meera Sharma" class="form-input" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="medNotesInput">Special Notes / Warnings (Optional)</label>
+          <input type="text" id="medNotesInput" name="notes" placeholder="e.g. Avoid grapefruit, keep in cool place" class="form-input" />
+        </div>
+
+        <div class="dialog-footer">
+          <button type="button" class="btn-cancel" id="cancelMedBtn">Cancel</button>
+          <button type="submit" class="btn-primary" id="saveMedBtn">Save Medicine</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- 2. ADD / EDIT APPOINTMENT DIALOG -->
+  <dialog id="appointmentModal" class="app-dialog" aria-labelledby="aptModalTitle">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h2 id="aptModalTitle">Schedule Doctor Visit</h2>
+        <button class="dialog-close-btn" id="closeAptModalBtn" aria-label="Close dialog">✕</button>
+      </div>
+
+      <form id="appointmentModalForm" class="dialog-form">
+        <input type="hidden" id="editAptId" name="id" value="" />
+
+        <div class="form-group">
+          <label for="aptDoctorInput">Doctor / Specialist Name <span class="required">*</span></label>
+          <input type="text" id="aptDoctorInput" name="doctor" required placeholder="e.g. Dr. Meera Sharma" class="form-input" />
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="aptSpecialtyInput">Specialty</label>
+            <input type="text" id="aptSpecialtyInput" name="specialty" placeholder="e.g. Cardiologist, Eye Specialist" class="form-input" />
+          </div>
+
+          <div class="form-group">
+            <label for="aptTypeSelect">Visit Type</label>
+            <select id="aptTypeSelect" name="type" class="form-input">
+              <option value="In-person Clinic">🏥 In-person Clinic</option>
+              <option value="Hospital Consultation">🏢 Hospital Consultation</option>
+              <option value="Telehealth Video">💻 Video Consultation</option>
+              <option value="Home Doctor Visit">🏡 Home Visit</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="aptDateInput">Date <span class="required">*</span></label>
+            <input type="date" id="aptDateInput" name="date" required class="form-input" />
+          </div>
+
+          <div class="form-group">
+            <label for="aptTimeInput">Time <span class="required">*</span></label>
+            <input type="time" id="aptTimeInput" name="time" required value="10:30" class="form-input" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="aptLocationInput">Clinic / Hospital Name & Address</label>
+          <input type="text" id="aptLocationInput" name="location" placeholder="e.g. City Heart Center, Suite 301" class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label for="aptPurposeInput">Purpose / Reason for Visit</label>
+          <input type="text" id="aptPurposeInput" name="purpose" placeholder="e.g. 3-month Blood Pressure Review & ECG" class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label for="aptNotesInput">Special Preparation Instructions</label>
+          <input type="text" id="aptNotesInput" name="notes" placeholder="e.g. Fast 8 hours prior for blood work, bring medication log" class="form-input" />
+        </div>
+
+        <div class="dialog-footer">
+          <button type="button" class="btn-cancel" id="cancelAptBtn">Cancel</button>
+          <button type="submit" class="btn-primary" id="saveAptBtn">Save Appointment</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- 3. MARK MISSED REASON MODAL -->
+  <dialog id="missedModal" class="app-dialog" aria-labelledby="missedModalTitle">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h2 id="missedModalTitle">Mark Medicine as Missed</h2>
+        <button class="dialog-close-btn" id="closeMissedModalBtn" aria-label="Close dialog">✕</button>
+      </div>
+
+      <div class="dialog-body-padded">
+        <p>You are marking <strong><span id="missedMedName">Medicine</span></strong> as missed for today.</p>
+        <p class="subtext">Recording the reason helps your doctor and family ensure you stay safe and comfortable.</p>
+
+        <div class="reason-options" id="reasonOptionsGroup">
+          <label class="reason-card">
+            <input type="radio" name="missedReason" value="Forgot / Away from home" checked />
+            <span class="reason-label">🏃 Forgot / Was away from home</span>
+          </label>
+          <label class="reason-card">
+            <input type="radio" name="missedReason" value="Felt nauseous or unwell" />
+            <span class="reason-label">🤢 Felt nauseous or unwell</span>
+          </label>
+          <label class="reason-card">
+            <input type="radio" name="missedReason" value="Ran out of medication" />
+            <span class="reason-label">📦 Ran out of medicine / Needs refill</span>
+          </label>
+          <label class="reason-card">
+            <input type="radio" name="missedReason" value="Doctor advised to skip" />
+            <span class="reason-label">👨‍⚕️ Doctor or clinic advised to skip</span>
+          </label>
+        </div>
+
+        <div class="dialog-footer">
+          <button type="button" class="btn-cancel" id="cancelMissedBtn">Cancel</button>
+          <button type="button" class="btn-danger" id="confirmMissedBtn">Record as Missed</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 4. LOG VITALS MODAL -->
+  <dialog id="vitalsModal" class="app-dialog" aria-labelledby="vitalsModalTitle">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h2 id="vitalsModalTitle">Log Senior Health Vitals</h2>
+        <button class="dialog-close-btn" id="closeVitalsModalBtn" aria-label="Close dialog">✕</button>
+      </div>
+
+      <form id="vitalsModalForm" class="dialog-form">
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="vitalBpSystolic">Blood Pressure Systolic (Top)</label>
+            <input type="number" id="vitalBpSystolic" placeholder="120" min="70" max="250" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label for="vitalBpDiastolic">Diastolic (Bottom)</label>
+            <input type="number" id="vitalBpDiastolic" placeholder="80" min="40" max="150" class="form-input" />
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="vitalSugarInput">Blood Glucose (mg/dL)</label>
+            <input type="number" id="vitalSugarInput" placeholder="110" min="40" max="500" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label for="vitalPulseInput">Heart Rate (BPM)</label>
+            <input type="number" id="vitalPulseInput" placeholder="72" min="40" max="200" class="form-input" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="vitalWeightInput">Weight (kg)</label>
+          <input type="number" step="0.1" id="vitalWeightInput" placeholder="68.5" class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label for="vitalNotesInput">Vitals Notes / Feeling</label>
+          <input type="text" id="vitalNotesInput" placeholder="e.g. Measured after 15 min rest, felt energetic" class="form-input" />
+        </div>
+
+        <div class="dialog-footer">
+          <button type="button" class="btn-cancel" id="cancelVitalsBtn">Cancel</button>
+          <button type="submit" class="btn-primary" id="saveVitalsBtn">Save Reading</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- 5. EMERGENCY SOS MODAL -->
+  <dialog id="sosModal" class="app-dialog emergency-dialog" aria-labelledby="sosModalTitle">
+    <div class="dialog-content">
+      <div class="dialog-header emergency-header">
+        <div class="sos-icon-pulse">🚨</div>
+        <div>
+          <h2 id="sosModalTitle">EMERGENCY ASSISTANCE CENTER</h2>
+          <p>Immediate phone links & Medical ID for Ravi Kumar</p>
+        </div>
+        <button class="dialog-close-btn light-close" id="closeSosModalBtn" aria-label="Close emergency dialog">✕</button>
+      </div>
+
+      <div class="sos-dialog-body">
+        <div class="sos-call-grid">
+          <a href="tel:911" class="sos-call-card ambulance-call">
+            <span class="call-icon">🚑</span>
+            <div class="call-info">
+              <strong>Emergency Services (Ambulance)</strong>
+              <span>Dial 108 / 911 immediately</span>
+            </div>
+            <span class="tap-call">TAP TO CALL</span>
+          </a>
+
+          <a href="tel:+15550192834" class="sos-call-card family-call">
+            <span class="call-icon">👩</span>
+            <div class="call-info">
+              <strong>Anita Kumar (Daughter)</strong>
+              <span>+1 (555) 019-2834</span>
+            </div>
+            <span class="tap-call">TAP TO CALL</span>
+          </a>
+
+          <a href="tel:+15550144921" class="sos-call-card caregiver-call">
+            <span class="call-icon">👩‍⚕️</span>
+            <div class="call-info">
+              <strong>Sunita Rao (Caregiver)</strong>
+              <span>+1 (555) 014-4921</span>
+            </div>
+            <span class="tap-call">TAP TO CALL</span>
+          </a>
+
+          <a href="tel:+15550178822" class="sos-call-card doctor-call">
+            <span class="call-icon">👨‍⚕️</span>
+            <div class="call-info">
+              <strong>Dr. Meera Sharma (Cardiologist)</strong>
+              <span>+1 (555) 017-8822</span>
+            </div>
+            <span class="tap-call">TAP TO CALL</span>
+          </a>
+        </div>
+
+        <!-- Senior Medical ID Card for Paramedics -->
+        <div class="medical-id-card">
+          <div class="medical-id-header">
+            <h4>Senior Medical ID (Show to First Responders)</h4>
+            <span class="id-tag">OFFICIAL ID</span>
+          </div>
+          <div class="medical-id-details">
+            <div><strong>Patient:</strong> Ravi Kumar (74 yrs)</div>
+            <div><strong>Blood Type:</strong> <span class="blood-badge">O Positive</span></div>
+            <div><strong>Key Allergies:</strong> <span class="allergy-badge">Penicillin</span></div>
+            <div><strong>Key Conditions:</strong> Hypertension, Type 2 Diabetes</div>
+            <div><strong>Current Medications:</strong> Amlodipine 5mg, Metformin 500mg, Atorvastatin 10mg</div>
+            <div><strong>Address:</strong> Flat 402, Green Meadows Residences</div>
+          </div>
+        </div>
+
+        <div class="sos-send-alert">
+          <button class="action-pill-btn danger-btn full-width" id="broadcastSosAlertBtn">
+            📢 Send Emergency Alert to Anita & Sunita (Simulate SMS / Family Alert)
+          </button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 6. ACTIVE DOSE REMINDER POPUP (Simulated Live Reminder) -->
+  <dialog id="reminderPopupModal" class="app-dialog reminder-dialog" aria-labelledby="reminderTitle">
+    <div class="dialog-content">
+      <div class="reminder-modal-header">
+        <div class="reminder-bell-ring">🔔</div>
+        <div>
+          <span class="reminder-kicker">MEDICATION REMINDER</span>
+          <h2 id="reminderTitle">Time for your medicine!</h2>
+        </div>
+      </div>
+
+      <div class="reminder-body">
+        <div class="reminder-med-spotlight">
+          <div class="spotlight-icon">💊</div>
+          <div class="spotlight-text">
+            <h3 id="reminderMedName">Vitamin D3</h3>
+            <p id="reminderMedDetail">1000 IU · Take after breakfast with water</p>
+          </div>
+        </div>
+        <p class="reminder-instruction">Staying on schedule keeps your blood pressure and energy in balance.</p>
+
+        <div class="reminder-action-buttons">
+          <button class="reminder-action-btn take-now-btn" id="reminderTakeNowBtn">
+            <span class="icon">✅</span>
+            <span>I Took This Now</span>
+          </button>
+
+          <button class="reminder-action-btn snooze-btn" id="reminderSnoozeBtn">
+            <span class="icon">⏰</span>
+            <span>Snooze (10 mins)</span>
+          </button>
+
+          <button class="reminder-action-btn skip-btn" id="reminderSkipBtn">
+            <span class="icon">✕</span>
+            <span>Skip / Missed</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 7. NOTIFICATIONS CENTER DRAWER / DIALOG -->
+  <dialog id="notificationsModal" class="app-dialog" aria-labelledby="notifModalTitle">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h2 id="notifModalTitle">Care Notifications & Alerts</h2>
+        <button class="dialog-close-btn" id="closeNotifModalBtn" aria-label="Close dialog">✕</button>
+      </div>
+
+      <div class="dialog-body-padded">
+        <div class="notif-actions-bar">
+          <button class="action-pill-btn secondary small" id="triggerSampleDoseAlertBtn">
+            🔔 Simulate Dose Reminder
+          </button>
+          <button class="text-link-btn" id="markAllNotifsReadBtn">Mark all as read</button>
+        </div>
+
+        <div class="notification-items-list" id="notificationsList">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 8. CAREGIVER LOG NOTE MODAL -->
+  <dialog id="careNoteModal" class="app-dialog" aria-labelledby="noteModalTitle">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h2 id="noteModalTitle">Add Caregiver Journal Note</h2>
+        <button class="dialog-close-btn" id="closeCareNoteModalBtn" aria-label="Close dialog">✕</button>
+      </div>
+
+      <form id="careNoteModalForm" class="dialog-form">
+        <div class="form-group">
+          <label for="careNoteAuthorInput">Logged By</label>
+          <select id="careNoteAuthorInput" class="form-input">
+            <option value="Sunita Rao (Caregiver)">Sunita Rao (Caregiver)</option>
+            <option value="Anita Kumar (Daughter)">Anita Kumar (Daughter)</option>
+            <option value="Dr. Meera Sharma (Clinician)">Dr. Meera Sharma (Clinician)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="careNoteTextInput">Observation / Notes <span class="required">*</span></label>
+          <textarea id="careNoteTextInput" rows="4" required placeholder="e.g. Dad was cheerful today, ate all lunch, walked for 20 minutes in the garden." class="form-input"></textarea>
+        </div>
+
+        <div class="dialog-footer">
+          <button type="button" class="btn-cancel" id="cancelCareNoteBtn">Cancel</button>
+          <button type="submit" class="btn-primary" id="saveCareNoteBtn">Save Care Note</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Printable Doctor Report Container (Hidden on screen, visible during window.print()) -->
+  <div id="printableDoctorReport" class="printable-report" style="display: none;"></div>
+
+  <!-- Toast Notification -->
+  <div id="toast" role="status" class="toast" aria-live="polite"></div>
+
+  <!-- Main JavaScript -->
+  <script src="app.js"></script>
+</body>
+</html>
